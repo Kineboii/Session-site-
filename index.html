@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iconic Tech | AI Session Solutions</title>
+    <title>Iconic Tech Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -12,6 +12,11 @@
             --dark: #1a1a2e;
             --light: #f8f9fa;
             --accent: #6ae2ff;
+            --online: #4ade80;
+            --offline: #f87171;
+            --battery-full: #4ade80;
+            --battery-medium: #fbbf24;
+            --battery-low: #f87171;
         }
         
         * {
@@ -22,20 +27,31 @@
         }
         
         body {
-            background-color: var(--light);
+            background-color: #f0f2f5;
             color: var(--dark);
             overflow-x: hidden;
+            min-height: 100vh;
         }
         
         /* Animations */
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+            50% { transform: translateY(-10px); }
         }
         
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
         
         @keyframes gradientBG {
@@ -44,171 +60,256 @@
             100% { background-position: 0% 50%; }
         }
         
-        /* Header */
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            background-size: 200% 200%;
-            animation: gradientBG 12s ease infinite;
-            color: white;
-            padding: 1rem 2rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            position: relative;
-            z-index: 100;
+        /* Dashboard Layout */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
         }
         
-        .navbar {
+        /* Sidebar */
+        .sidebar {
+            background: var(--dark);
+            color: white;
+            padding: 2rem 1rem;
+            position: relative;
+            z-index: 10;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            animation: slideIn 0.8s ease-out;
+        }
+        
+        .status-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .online-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--online);
+            margin-right: 10px;
+            animation: blink 2s infinite;
+            box-shadow: 0 0 10px var(--online);
+        }
+        
+        .status-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .status-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+            color: #ccc;
         }
         
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-decoration: none;
+        .status-label {
+            color: #aaa;
+        }
+        
+        .status-value {
+            font-weight: 600;
             color: white;
-            transition: transform 0.3s ease;
         }
         
-        .logo:hover {
-            transform: scale(1.05);
-        }
-        
-        .logo-icon {
-            font-size: 2rem;
-            animation: float 4s ease-in-out infinite;
-        }
-        
-        /* Hero Section */
-        .hero {
-            min-height: 80vh;
+        .battery-container {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-align: center;
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
+            gap: 5px;
         }
         
-        .hero::before {
+        .battery-level {
+            height: 15px;
+            width: 40px;
+            border: 2px solid white;
+            border-radius: 4px;
+            padding: 2px;
+            position: relative;
+        }
+        
+        .battery-fill {
+            height: 100%;
+            border-radius: 2px;
+            background-color: var(--battery-full);
+            width: 80%;
+            transition: width 0.5s ease;
+        }
+        
+        .battery-percent {
+            font-size: 0.8rem;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 2rem;
+            background: url('https://images.unsplash.com/photo-1639762681057-408e52192e55?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80') center/cover;
+            position: relative;
+        }
+        
+        .main-content::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80') center/cover;
-            opacity: 0.1;
-            z-index: -1;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 0;
         }
         
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: pulse 3s ease infinite;
-        }
-        
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin-bottom: 2rem;
-            color: var(--dark);
-        }
-        
-        /* Projects Section */
-        .projects {
-            padding: 4rem 2rem;
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
             max-width: 1200px;
             margin: 0 auto;
         }
         
-        .section-title {
-            text-align: center;
-            margin-bottom: 3rem;
-            font-size: 2.5rem;
-            color: var(--secondary);
-            position: relative;
-            display: inline-block;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(to right, var(--primary), var(--accent));
-            border-radius: 2px;
-        }
-        
-        .project-cards {
+        /* Time and Date */
+        .time-date {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 2rem;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            max-width: 350px;
-            position: relative;
-        }
-        
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
-        }
-        
-        .card-image {
-            height: 180px;
-            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
-            display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            font-size: 4rem;
+            margin-bottom: 2rem;
             color: white;
         }
         
-        .queen-ruva {
-            background: linear-gradient(45deg, #a18cd1, #fbc2eb);
+        .time {
+            font-size: 3.5rem;
+            font-weight: 300;
+            letter-spacing: 2px;
         }
         
-        .joker-max {
-            background: linear-gradient(45deg, #ffecd2, #fcb69f);
+        .date {
+            font-size: 1.2rem;
+            opacity: 0.8;
         }
         
-        .card-content {
+        /* Project Cards */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        .project-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            animation: slideIn 0.8s ease-out;
+            animation-fill-mode: backwards;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        
+        .project-card.joker {
+            animation-delay: 0.2s;
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(70, 22, 115, 0.5));
+        }
+        
+        .project-card.queen {
+            animation-delay: 0.4s;
+            background: linear-gradient(135deg, rgba(255, 102, 178, 0.3), rgba(200, 80, 150, 0.5));
+        }
+        
+        .card-header {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-icon {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        .joker .card-icon {
+            background: linear-gradient(135deg, var(--secondary), #562b97);
+        }
+        
+        .queen .card-icon {
+            background: linear-gradient(135deg, var(--primary), #c85096);
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .card-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+        
+        .card-body {
             padding: 1.5rem;
         }
         
-        .card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--secondary);
+        .card-stats {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
         }
         
-        .card p {
-            color: #666;
-            margin-bottom: 1.5rem;
-            line-height: 1.5;
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stat-icon {
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+        
+        .card-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .last-updated {
+            font-size: 0.9rem;
+            opacity: 0.7;
         }
         
         .btn {
@@ -216,226 +317,276 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 0.8rem 1.5rem;
+            padding: 0.7rem 1.5rem;
             border-radius: 50px;
             font-weight: 600;
             text-decoration: none;
             transition: all 0.3s ease;
             border: none;
             cursor: pointer;
+            font-size: 0.9rem;
         }
         
         .btn-primary {
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            color: white;
-            box-shadow: 0 4px 12px rgba(255, 102, 178, 0.3);
+            background: white;
+            color: var(--dark);
         }
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(255, 102, 178, 0.4);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
         }
         
-        .btn-secondary {
-            background: white;
-            color: var(--secondary);
-            border: 2px solid var(--secondary);
+        /* Character Animation */
+        .character {
+            position: absolute;
+            z-index: 2;
+            animation: float 6s ease-in-out infinite;
         }
         
-        .btn-secondary:hover {
-            background: var(--secondary);
-            color: white;
+        .joker-character {
+            top: 100px;
+            right: 50px;
+            width: 120px;
+            animation-delay: 0.3s;
         }
         
-        /* Footer */
-        footer {
-            background: var(--dark);
-            color: white;
-            padding: 3rem 2rem 1.5rem;
-            text-align: center;
+        .queen-character {
+            bottom: 50px;
+            right: 80px;
+            width: 150px;
+            animation-delay: 0.6s;
         }
         
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        /* Loading State */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
         }
         
-        .footer-logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .social-links {
-            display: flex;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .social-link {
-            color: white;
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-        }
-        
-        .social-link:hover {
-            color: var(--accent);
-            transform: scale(1.2);
-        }
-        
-        .footer-links {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .footer-link {
-            color: #ccc;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-link:hover {
-            color: white;
-        }
-        
-        .copyright {
-            margin-top: 2rem;
-            color: #aaa;
-            font-size: 0.9rem;
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .character {
+                display: none;
+            }
+        }
+        
         @media (max-width: 768px) {
-            .hero h1 {
+            .time {
                 font-size: 2.5rem;
             }
             
-            .project-cards {
+            .card-stats {
                 flex-direction: column;
-                align-items: center;
-            }
-            
-            .section-title {
-                font-size: 2rem;
+                gap: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <a href="#" class="logo">
-                <i class="fas fa-robot logo-icon"></i>
-                <span>Iconic Tech</span>
-            </a>
-        </nav>
-    </header>
-    
-    <section class="hero">
-        <h1>AI Session Management Solutions</h1>
-        <p>Powerful, scalable, and easy-to-use session management tools for your AI applications. Deploy with confidence and scale effortlessly.</p>
-    </section>
-    
-    <section class="projects">
-        <h2 class="section-title">Our Projects</h2>
+    <div class="dashboard">
+        <!-- Sidebar with status information -->
+        <div class="sidebar">
+            <div class="status-card">
+                <div class="status-header">
+                    <div class="online-status"></div>
+                    <div class="status-title">System Status</div>
+                </div>
+                
+                <div class="status-item">
+                    <span class="status-label">IP Address</span>
+                    <span class="status-value" id="ip-address">Loading...</span>
+                </div>
+                
+                <div class="status-item">
+                    <span class="status-label">Battery</span>
+                    <span class="status-value">
+                        <div class="battery-container">
+                            <div class="battery-level">
+                                <div class="battery-fill"></div>
+                            </div>
+                            <span class="battery-percent">Loading...</span>
+                        </div>
+                    </span>
+                </div>
+                
+                <div class="status-item">
+                    <span class="status-label">Current Time</span>
+                    <span class="status-value" id="current-time">00:00:00</span>
+                </div>
+                
+                <div class="status-item">
+                    <span class="status-label">Date</span>
+                    <span class="status-value" id="current-date">Jan 1, 2023</span>
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <div class="status-header">
+                    <div class="status-title">Quick Links</div>
+                </div>
+                
+                <div class="status-item">
+                    <span class="status-label">Telegram</span>
+                    <span class="status-value">
+                        <a href="#" style="color: var(--accent); text-decoration: none;">
+                            <i class="fab fa-telegram"></i> Join
+                        </a>
+                    </span>
+                </div>
+                
+                <div class="status-item">
+                    <span class="status-label">WhatsApp</span>
+                    <span class="status-value">
+                        <a href="#" style="color: var(--accent); text-decoration: none;">
+                            <i class="fab fa-whatsapp"></i> Chat
+                        </a>
+                    </span>
+                </div>
+            </div>
+        </div>
         
-        <div class="project-cards">
-            <div class="card">
-                <div class="card-image queen-ruva">
-                    <i class="fas fa-crown"></i>
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Floating Characters -->
+            <img src="https://i.imgur.com/JKvzW3a.png" alt="Joker Character" class="character joker-character">
+            <img src="https://i.imgur.com/XZw7xPk.png" alt="Queen Character" class="character queen-character">
+            
+            <div class="content-wrapper">
+                <!-- Time and Date Display -->
+                <div class="time-date">
+                    <div>
+                        <div class="time" id="main-time">00:00:00</div>
+                        <div class="date" id="main-date">Monday, January 1, 2023</div>
+                    </div>
                 </div>
-                <div class="card-content">
-                    <h3>Queen Ruva Session ID</h3>
-                    <p>A robust session ID generator and manager for AI applications, providing unique identifiers with high reliability and performance.</p>
-                    <a href="https://queen-ruva-session-id.onrender.com" class="btn btn-primary" target="_blank">
-                        <i class="fas fa-external-link-alt"></i> Visit Project
-                    </a>
-                </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-image joker-max">
-                    <i class="fas fa-code-branch"></i>
-                </div>
-                <div class="card-content">
-                    <h3>Joker Max Session Pair</h3>
-                    <p>Advanced session pairing system that creates secure connections between client and server with minimal latency.</p>
-                    <a href="https://joker-max-xmd-session-pair.onrender.com" class="btn btn-primary" target="_blank">
-                        <i class="fas fa-external-link-alt"></i> Visit Project
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <footer>
-        <div class="footer-content">
-            <div class="footer-logo">
-                <i class="fas fa-robot"></i>
-                <span>Iconic Tech <h6>Follow us</h6></span>
-            </div>
-            
-            <div class="social-links">
-                <a href="https://t.me/iconictech_official" class="social-link" aria-label="Telegram">
-                    <i class="fab fa-telegram"></i>
-                </a>
-                <a href="https://whatsapp.com/channel/0029ValX2Js9RZAVtDgMYj0r" class="social-link" aria-label="WhatsApp">
-                    <i class="fab fa-whatsapp"></i>
-                </a>
-                <a href="https://github.com/iconic05" class="social-link" aria-label="GitHub">
-                    <i class="fab fa-github"></i>
-                </a>
-                <a href="#" class="social-link" aria-label="Twitter">
-                    <i class="fab fa-twitter"></i>
-                </a>
-            </div>
-            
-       
-            
-            <p class="copyright">
-                &copy; 2025 Iconic Tech. All rights reserved.
-            </p>
-        </div>
-    </footer>
-    
-    <script>
-        // Simple animation triggers
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.card');
-            
-            cards.forEach((card, index) => {
-                // Staggered animation
-                card.style.transitionDelay = `${index * 0.1}s`;
                 
-                // Add hover effect
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-10px)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
-            });
-            
-            // Smooth scroll for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                });
-            });
-        });
-    </script>
-</body>
-</html>
+                <!-- Project Cards -->
+                <div class="projects-grid">
+                    <!-- Joker Max Card -->
+                    <div class="project-card joker">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-code-branch"></i>
+                            </div>
+                            <div>
+                                <div class="card-title">Joker Max XMD</div>
+                                <div class="card-subtitle">Session Pair System</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="card-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-code-fork stat-icon"></i>
+                                    <div>
+                                        <div class="stat-value" id="joker-forks">
+                                            <span class="loading"></span>
+                                        </div>
+                                        <div class="stat-label">Forks</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="stat-item">
+                                    <i class="fas fa-star stat-icon"></i>
+                                    <div>
+                                        <div class="stat-value" id="joker-stars">
+                                            <span class="loading"></span>
+                                        </div>
+                                        <div class="stat-label">Stars</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="stat-item">
+                                    <i class="fas fa-eye stat-icon"></i>
+                                    <div>
+                                        <div class="stat-value" id="joker-watchers">
+                                            <span class="loading"></span>
+                                        </div>
+                                        <div class="stat-label">Watchers</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer">
+                            <div class="last-updated">
+                                Last updated: <span id="joker-updated">Loading...</span>
+                            </div>
+                            <a href="https://joker-max-xmd-session-pair.onrender.com" class="btn btn-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> Visit
+                            </a>
+                            <a href="https://github.com/iconic05/Joker-Max-XMD" class="btn btn-primary" target="_blank" style="margin-left: 10px;">
+                                <i class="fab fa-github"></i> Repo
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Queen Ruva Card -->
+                    <div class="project-card queen">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <div>
+                                <div class="card-title">Queen Ruva AI</div>
+                                <div class="card-subtitle">Session ID Generator</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="card-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-code-fork stat-icon"></i>
+                                    <div>
+                                        <div class="stat-value" id="queen-forks">
+                                            <span class="loading"></span>
+                                        </div>
+                                        <div class="stat-label">Forks</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="stat-item">
+                                    <i class="fas fa-star stat-icon"></i>
+                                    <div>
+                                        <div class="stat-value" id="queen-stars">
+                                            <span class="loading"></span>
+                                        </div>
+                                        <div class="stat-label">Stars</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="stat-item">
+                                    <i class="fas fa-eye stat-icon"></i>
+                                    <div>
+                                        <div class="stat-value" id="queen-watchers">
+                                            <span class="loading"></span>
+                                        </div>
+                                        <div class="stat-label">Watchers</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer">
+                            <div class="last-updated">
+                                Last updated: <span id="queen-updated">Loading...</span>
+                            </div>
+                            <a href="https://queen-ruva-session-id.
